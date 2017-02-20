@@ -130,6 +130,13 @@ class modOculMarkov:
                print(secEstados,secObservaciones)
         return secEstados,secObservaciones
 
+    #Calcular la proporción de estados que coinciden
+    def evaluaViterbi(estados,estadosCalculados):
+        val = 0
+        for i in range(len(estados)):
+            if estados[i] == estadosCalculados[i]:
+                val += 1
+        return (val/len(estados))
 
 #Ejemplo pag. 28
 # Lista: [Lluvia[lluvia, no-lluvia],No-lluvia[lluvia, no-lluvia]]        
@@ -146,3 +153,8 @@ posiblesObservaciones = ['paraguas','paraguas','no-paraguas']
 #estados = modOculMarkov.viterbi(prueba, posiblesObservaciones)
 #print(estados)
 secEstados,secObservaciones = modOculMarkov.muestreo(prueba, 3)
+estEstados = modOculMarkov.viterbi(prueba, secObservaciones)
+print('Valor original:',secEstados)
+print('Estados estimados:',estEstados)
+prob = modOculMarkov.evaluaViterbi(secEstados,estEstados)
+print('Proporcion de coincidencias:',str(prob)+'%')
