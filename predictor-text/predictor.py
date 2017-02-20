@@ -23,8 +23,7 @@ def reemplaza(archivo):
     archivo = archivo.replace(']','')
     archivo = archivo.replace('[','')
     archivo = archivo.replace('(','')
-    archivo = archivo.replace(')','')
-    #archivo = archivo.replace(patron,'')    
+    archivo = archivo.replace(')','')   
     archivo = patron.sub('',archivo)    
     return archivo.lower()
 
@@ -175,104 +174,71 @@ def decodificaBigramLetras(numeros,diccionarioUni,diccionarioBi,teclado):
 
 
 #-------------- Decodificacion usando bigram y unigram de letras y palabras ------
-def decodificaUnigramPalabras(numeros,diccionarioUni,diccionarioBi,diccionarioUniPal,teclado):
-    numeros= numeros.split(" ")
-    texto = []
-    posPalabra = 0
-    #Recorre los distintos numeros que se encontraban separados por espacios
-    for numero in numeros:  
-        #Buscar en unigram de palabras si existe alguna entrada para ese numero
-        palabra = ""
-        frecuencia = 0
-        for claves in diccionarioUniPal:
-            num,valor = claves.split(' ', 1)
-            if(num == numero):
-                if(frecuencia < diccionarioUniPal.get(claves)):
-                    palabra = valor
-                    frecuencia = diccionarioUniPal.get(claves)               
-        if len(palabra) > 0:
-            print(palabra)
-        #Si no existe en unigram de palabras ninguna entrada, se aplica el bigram de letras
-        else:
-            #Se genera la primera letra a partir del unigram
-            valDigito = (teclado.get(int(numero[0])))            
-            letraI=valDigito[0]
-            frecuenciaI = diccionarioUni.get(valDigito[0])            
-            for y in valDigito:
-                if(frecuenciaI < diccionarioUni.get(y)):
-                    letraI=y
-                    frecuenciaI = diccionarioUni.get(y)
-            #Genera el resto de letras con el bigram
-            texto.append(letraI)
-            posLetra = 0
-            for digito in numero[1:]:
-                valDigito = (teclado.get(int(digito)))            
-                letra=valDigito[0] 
-                frecuencia = diccionarioBi.get(texto[posPalabra][posLetra]+letra)                     
-                for valor in valDigito:
-                    if(frecuencia < diccionarioBi.get(texto[posPalabra][posLetra]+valor)):
-                        letra=valor
-                        frecuencia = diccionarioBi.get(texto[posPalabra][posLetra]+valor)    
-                texto[posPalabra]+=letra
-                print(posPalabra,posLetra, texto)
-                posLetra += 1
-            posPalabra += 1
-            
+def decodificaUnigramPalabras(numero,diccionarioUni,diccionarioBi,diccionarioUniPal,teclado):
+    palabra = ""
+    frecuencia = 0
+    #Buscar en unigram de palabras si existe alguna entrada para ese numero
+    for claves in diccionarioUniPal:
+        num,valor = claves.split(' ', 1)
+        if(num == numero):
+            if(frecuencia < diccionarioUniPal.get(claves)):
+                palabra = valor
+                frecuencia = diccionarioUniPal.get(claves)                 
+    if len(palabra) > 0:
+        print(palabra)
+    #Si no existe en unigram de palabras ninguna entrada, se aplica el bigram de letras
+    else:
+        #Se genera la primera letra a partir del unigram
+        valDigito = (teclado.get(int(numero[0])))            
+        letraI=valDigito[0]
+        frecuenciaI = diccionarioUni.get(valDigito[0])            
+        for y in valDigito:
+            if(frecuenciaI < diccionarioUni.get(y)):
+                letraI=y
+                frecuenciaI = diccionarioUni.get(y)
+        #Genera el resto de letras con el bigram
+        palabra += letraI
+        posLetra = 0
+        for digito in numero[1:]:
+            valDigito = (teclado.get(int(digito)))            
+            letra=valDigito[0] 
+            frecuencia = diccionarioBi.get(palabra[posLetra]+letra)                     
+            for valor in valDigito:
+                if(frecuencia < diccionarioBi.get(palabra[posLetra]+valor)):
+                    letra=valor
+                    frecuencia = diccionarioBi.get(palabra[posLetra]+valor)    
+            palabra+=letra
+            print(posLetra, palabra)
+            posLetra += 1
+    return palabra
+
 #-------------- Decodificacion usando bigram y unigram de letras y palabras ------
 def decodificaBigramPalabras(numeros,diccionarioUni,diccionarioBi,diccionarioUniPal,diccionarioBiPal,teclado):
     numeros= numeros.split(" ")
     texto = []
-    posPalabra = 0
     #Recorre los distintos numeros que se encontraban separados por espacios
     for contador in range(len(numeros)):
+        #Buscar en unigram de palabras si existe alguna entrada para ese numero
         if contador == 0:
             numero = numeros[0]
-            palabra = ""
-            frecuencia = 0
-            for claves in diccionarioUniPal:
-                num,valor = claves.split(' ', 1)
-                if(num == numero):
-                    if(frecuencia < diccionarioUniPal.get(claves)):
-                        palabra = valor
-                        frecuencia = diccionarioUniPal.get(claves)                 
-            if len(palabra) > 0:
-                print(palabra)
-            else:
-                #Se genera la primera letra a partir del unigram
-                valDigito = (teclado.get(int(numero[0])))            
-                letraI=valDigito[0]
-                frecuenciaI = diccionarioUni.get(valDigito[0])            
-                for y in valDigito:
-                    if(frecuenciaI < diccionarioUni.get(y)):
-                        letraI=y
-                        frecuenciaI = diccionarioUni.get(y)
-                #Genera el resto de letras con el bigram
-                texto.append(letraI)
-                posLetra = 0
-                for digito in numero[1:]:
-                    valDigito = (teclado.get(int(digito)))            
-                    letra=valDigito[0] 
-                    frecuencia = diccionarioBi.get(texto[posPalabra][posLetra]+letra)                     
-                    for valor in valDigito:
-                        if(frecuencia < diccionarioBi.get(texto[posPalabra][posLetra]+valor)):
-                            letra=valor
-                            frecuencia = diccionarioBi.get(texto[posPalabra][posLetra]+valor)    
-                    texto[posPalabra]+=letra
-                    print(posPalabra,posLetra, texto)
-                    posLetra += 1
-                posPalabra += 1
+            texto.append(decodificaUnigramPalabras(numero,diccionarioUni,
+                                                   diccionarioBi,diccionarioUniPal,teclado))       
+        #Aplica el bigram de palabras
         else:
             palabra = ""
             frecuencia = 0
             for claves in diccionarioBiPal:
                 num,valor = claves.split(' ', 1)
-                if(num == numero):         
+                if(num == numeros[contador-1] and numeros[contador] == codificaPalabra(valor,teclado)):         
                     if(frecuencia < diccionarioBiPal.get(claves)):
                         palabra = valor
-                        frecuencia = diccionarioBiPal.get(claves)                      
-            print(palabra)
-            numero = codificaPalabra(palabra,teclado)
-        
+                        frecuencia = diccionarioBiPal.get(claves) 
+            if palabra == "":
+                palabra = decodificaUnigramPalabras(numeros[contador], diccionarioUni,
+                                                    diccionarioBi,diccionarioUniPal,teclado)
+            texto.append(palabra)
+            print(texto)
+
 teclado = {}
 teclado[2] = ["a","b","c"]
 teclado[3] = ["d","e","f"]
@@ -289,9 +255,9 @@ diccionarioUni=unigramLetras(archivo)
 diccionarioBi=bigramLetras(archivo)
 diccionarioUniPal=unigramPalabras(archivo)
 diccionarioBiPal = bigramPalabras(archivo)
+#numeros = "35 68636 37 689 472633"
 numeros = "42782 58346 5847"
 #numeros = "4255462"
 #(decodificaBigramLetras(numeros,diccionarioUni,diccionarioBi,teclado))
-#print(unigramPalabras(archivo))
-(decodificaUnigramPalabras(numeros,diccionarioUni,diccionarioBi,diccionarioUniPal,teclado))
+#(decodificaUnigramPalabras(numeros,diccionarioUni,diccionarioBi,diccionarioUniPal,teclado))
 decodificaBigramPalabras(numeros,diccionarioUni,diccionarioBi,diccionarioUniPal,diccionarioBiPal,teclado)
