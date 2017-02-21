@@ -39,7 +39,12 @@ class modOculMarkov:
                     print(modOculMarkov.transiciones[i][estado],'*' , antAlpha[estado])
                 alpha[i] = modOculMarkov.sensor[i][indice] * valor
                 print("Valor nuevo alpha: ", alpha)
-        return alpha
+        acum=0
+        for i in alpha:
+            if acum < i:
+                acum = i
+                val = modOculMarkov.estados[alpha.index(i)]
+        return val
         
     #Devuelve la secuencia de estados mas probables para las observaciones tomadas   
     def viterbi(modOculMarkov, posiblesObservaciones):
@@ -149,12 +154,14 @@ observaciones = ['paraguas','no-paraguas']
 prueba = modOculMarkov(A,B,pi,estados,observaciones)
 posiblesObservaciones = ['paraguas','paraguas','no-paraguas']
 
-#alpha = modOculMarkov.avance(prueba,posiblesObservaciones)
+print(modOculMarkov.avance(prueba,posiblesObservaciones))
 #estados = modOculMarkov.viterbi(prueba, posiblesObservaciones)
 #print(estados)
+"""
 secEstados,secObservaciones = modOculMarkov.muestreo(prueba, 3)
 estEstados = modOculMarkov.viterbi(prueba, secObservaciones)
 print('Valor original:',secEstados)
 print('Estados estimados:',estEstados)
 prob = modOculMarkov.evaluaViterbi(secEstados,estEstados)
 print('Proporcion de coincidencias:',str(prob)+'%')
+"""
