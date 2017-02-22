@@ -24,21 +24,21 @@ class modOculMarkov:
         #Generacion de la probabilidad del primer instante(paso 1)
         for i in rangoEstados:
             alpha.append(modOculMarkov.sensor[i][indice] * modOculMarkov.probEstInicial[i])
-        print(alpha)     
+        #print(alpha)     
         #Generacion de la probabilidad de los siguientes instantes
         rangoPosObs = range(1,len(posiblesObservaciones)) #Rango de las posibles observaciones tomadas
         for obs in rangoPosObs:
             indice = modOculMarkov.observacion.index(posiblesObservaciones[obs])
             antAlpha = alpha[:]
-            print("Observacion: ", obs)
+            #print("Observacion: ", obs)
             for i in rangoEstados:
                 valor = 0
-                print("Estado: ", i)
+                #print("Estado: ", i)
                 for estado in rangoEstados:
                     valor += modOculMarkov.transiciones[i][estado] * antAlpha[estado]
-                    print(modOculMarkov.transiciones[i][estado],'*' , antAlpha[estado])
+                    #print(modOculMarkov.transiciones[i][estado],'*' , antAlpha[estado])
                 alpha[i] = modOculMarkov.sensor[i][indice] * valor
-                print("Valor nuevo alpha: ", alpha)
+                #print("Valor nuevo alpha: ", alpha)
         acum=0
         for i in alpha:
             if acum < i:
@@ -56,26 +56,26 @@ class modOculMarkov:
         for i in rangoEstados:
             viterbi.append(modOculMarkov.sensor[i][indice] * modOculMarkov.probEstInicial[i])
             prob['0-'+str(i)] = ''
-        print(viterbi)
-        print(prob)
+        #print(viterbi)
+        #print(prob)
         rangoPosObs = range(1,len(posiblesObservaciones)) #Rango de las posibles observaciones tomadas
         #Generamos los valores de viterbi y las probabilidades de cada estado
         for obs in rangoPosObs:
             indice = modOculMarkov.observacion.index(posiblesObservaciones[obs])
             antViterbi = viterbi[:]
-            print("Observacion: ", obs)
+            #print("Observacion: ", obs)
             for i in rangoEstados:
                 valor = 0
-                print("Estado: ", i)
+                #print("Estado: ", i)
                 for estado in rangoEstados:
                     valorActual = modOculMarkov.transiciones[i][estado] * antViterbi[estado]
                     if valor < valorActual:
                         valor = valorActual
                         prob[str(obs)+'-'+str(i)] = estado
-                    print(modOculMarkov.transiciones[i][estado],'*' , antViterbi[estado])
+                    #print(modOculMarkov.transiciones[i][estado],'*' , antViterbi[estado])
                 viterbi[i] = modOculMarkov.sensor[i][indice] * valor
-                print("Valor nuevo viterbi: ", viterbi)
-                print("Valor estados: ", prob)
+                #print("Valor nuevo viterbi: ", viterbi)
+                #print("Valor estados: ", prob)
             #Calculamos la probabilidad de la ultima observacion y extraemos los estados mas probables para llegar a ese estado
             if obs == len(posiblesObservaciones)-1:
                 valor = 0
@@ -88,7 +88,7 @@ class modOculMarkov:
                 for n in range(len(posiblesObservaciones)-1,0,-1):
                     ultimoEstado = prob[str(n)+'-'+str(ultimoEstado)]
                     estados.append(modOculMarkov.estados[ultimoEstado])
-                print(list(reversed(estados)))
+                #print(list(reversed(estados)))
         return list(reversed(estados))
     
     #Asigna una observacion para un estado dado a partir un numero aleatorio
@@ -112,7 +112,7 @@ class modOculMarkov:
         estadoActual = 0
         for estado in range(numEstados):
             numeroAleatorio = random.random()
-            print("Numero aleatorio estado:",numeroAleatorio)
+            #print("Numero aleatorio estado:",numeroAleatorio)
             if estado == 0:
                 valor = 0
                 for i in range(len(modOculMarkov.probEstInicial)):
@@ -122,7 +122,7 @@ class modOculMarkov:
                         secObservaciones.append(modOculMarkov.generaObservaciones(i))
                         estadoActual = i
                         break
-                print(secEstados,secObservaciones)
+                #print(secEstados,secObservaciones)
             else:
                valor = 0
                for i in range(len(modOculMarkov.transiciones[estadoActual])):
@@ -132,14 +132,14 @@ class modOculMarkov:
                        secObservaciones.append(modOculMarkov.generaObservaciones(i))
                        estadoActual = i
                        break 
-               print(secEstados,secObservaciones)
+               #print(secEstados,secObservaciones)
         return secEstados,secObservaciones
 
     #Calcular la proporción de estados que coinciden
     def evaluaViterbi(estados,estadosCalculados):
         val = 0
         for i in range(len(estados)):
-            if estados[i] == estadosCalculados[i]:
+            if estados[i] != estadosCalculados[i]:
                 val += 1
         return (val/len(estados))
 
@@ -151,13 +151,14 @@ B = [[0.9,0.1],[0.2,0.8]]
 pi = [0.5,0.5]
 estados = ['lluvia','no-lluvia']
 observaciones = ['paraguas','no-paraguas']
+"""
 prueba = modOculMarkov(A,B,pi,estados,observaciones)
 posiblesObservaciones = ['paraguas','paraguas','no-paraguas']
 
 print(modOculMarkov.avance(prueba,posiblesObservaciones))
 #estados = modOculMarkov.viterbi(prueba, posiblesObservaciones)
 #print(estados)
-"""
+
 secEstados,secObservaciones = modOculMarkov.muestreo(prueba, 3)
 estEstados = modOculMarkov.viterbi(prueba, secObservaciones)
 print('Valor original:',secEstados)
