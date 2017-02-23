@@ -20,6 +20,7 @@ class modOculMarkov:
     def avance(modOculMarkov, posiblesObservaciones):
         alpha=[]
         indice = modOculMarkov.observacion.index(posiblesObservaciones[0])
+        print("Observacion", modOculMarkov.observacion[indice])
         rangoEstados = range(len(modOculMarkov.estados)) #Rango con todos los posibles estados
         #Generacion de la probabilidad del primer instante(paso 1)
         for i in rangoEstados:
@@ -29,6 +30,7 @@ class modOculMarkov:
         rangoPosObs = range(1,len(posiblesObservaciones)) #Rango de las posibles observaciones tomadas
         for obs in rangoPosObs:
             indice = modOculMarkov.observacion.index(posiblesObservaciones[obs])
+            print("Observacion", modOculMarkov.observacion[indice])
             antAlpha = alpha[:]
             #print("Observacion: ", obs)
             for i in rangoEstados:
@@ -122,11 +124,11 @@ class modOculMarkov:
                         secObservaciones.append(modOculMarkov.generaObservaciones(i))
                         estadoActual = i
                         break
-                #print(secEstados,secObservaciones)
+                print("Valores de estado 0:",secEstados,secObservaciones)
             else:
                valor = 0
                for i in range(len(modOculMarkov.transiciones[estadoActual])):
-                   valor += modOculMarkov.sensor[estadoActual][i]
+                   valor += modOculMarkov.transiciones[estadoActual][i]
                    if numeroAleatorio < valor:
                        secEstados.append(modOculMarkov.estados[i])
                        secObservaciones.append(modOculMarkov.generaObservaciones(i))
