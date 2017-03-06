@@ -18,14 +18,17 @@ def diccionarioUsuario(pathToFile):
 
 	print (user)
 
-#Define el ejemplo de la pagina 6
-def example():
-    a = [5,3,4,4]
-    b = [3,1,2,3,3]
-    c = [4,3,4,3,5]
-    d = [3,3,1,5,4]
-    e = [1,5,5,2,1]
-    conj = [a,b,c,d,e]
+"""
+Define el ejemplo de la pagina 6
+Modificado para que sea usando diccionarios
+"""
+def userExample():
+    conj = {"a":{1:5,2:3,3:4,4:4},
+            "b":{1:3,2:1,3:2,4:3,5:3},
+            "c":{1:4,2:3,3:4,4:3,5:5},
+            "d":{1:3,2:3,3:1,4:5,5:4},
+            "e":{1:1,2:5,3:5,4:2,5:1},
+           }
     return conj
 
 # x: dataset
@@ -38,53 +41,64 @@ def similarity(x,y):
 # x: dataset
 def media(x):
 	media = 0	
-	for i in range(len(x)):
-		media +=x[i]
-	return (media / len (x))
+	for score in x.values():
+		media += score
+	return (media / len (x.values()))
 
-# x: dataset
-# y: dataset
-def equalItems(x,y):
-    lenx = len(x)
-    leny = len(y)
-    elements = abs(lenx - leny)
-    if(lenx > leny):
-        for i in range(elements):
-            x.pop()
-    elif(leny > lenx):
-        for i in range(elements):
-            y.pop()
-    return x,y
-
-#A partir del conjunto de usuarios y del usuario a comprobar la similaridad,
-# devuelve el conjunto de vecinos que supera el umbral de similaridad dado.
+"""
+A partir del conjunto de usuarios y del usuario a comprobar la similaridad,
+ devuelve el conjunto de vecinos que supera el umbral de similaridad dado.
+"""
 def neighborhood(x,conj,threshold):
-    neighborhood = []
+    neighborhood = {}
     sim = 0
-    valx = x[:]
-    valy = []
-    for i in range(len(conj)):
-        valy = conj[i][:]
-        valx, valy = equalItems(valx,valy)
-        sim = similarity(valx,valy)
-        print("Similaridad:",sim)
-        if(sim >= threshold and valx != valy):
-            neighborhood.append(conj[i])
-    print(conj)
+    itemX = conj.get(x)
+    #Recorremos todos los usuarios
+    for user in conj:
+        valx = []
+        valy = []
+        if user != x:
+            itemY = conj.get(user)
+            #Para cada usuario obtenemos todos los items puntuados
+            for item in itemY:
+                #Comprobamos si el item existe puntuado en la lista del usuario recibido
+                if item in itemX:
+                    print("Existe item", item)
+                    valx.append(itemX.get(item))
+                    valy.append(itemY.get(item))
+            print("Val x", valx)
+            print("Val y", valy)
+            sim = similarity(valx,valy)
+            print("Similaridad:",sim)
+            #Si la similaridad supera el umbral, lo consideramos vecino
+            if(sim >= threshold):
+                neighborhood[user] = sim
     return neighborhood
+
 # a : dataset
 # p : object not in a
 # N : set of dataset
-def prediction (a ,p ,N):
-	r = media(a)
-	for i in range (len(N)):
-		aux = v.remove(p)	
-		print (similarity(a,aux))
-
+def prediction (a, p, N, threshold):
+    pred = 0
+    neighbors = neighborhood(a,N, threshold)
+    ra = media(N.get(a))
+    pred += ra
+    num = 0
+    den = 0
+    for user in neighbors:
+        rb = media(N.get(user))
+        sim = neighbors.get(user)
+        score = N.get(user).get(p)
+        num += (sim*(score-rb))
+        den += sim
+        print("Media",rb,"Sim",sim,"Score",score)
+    pred += num/den
+    return pred
 
 #diccionarioUsuario("u.data")
-conj = example()
-print(conj)
+conj = userExample()
+#print(conj)
 
 
-print (neighborhood(conj[0],conj,0.6))
+#print (neighborhood("a",conj,0.6))
+print(prediction("a",5,conj,0.6))
