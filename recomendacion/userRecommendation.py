@@ -1,35 +1,4 @@
-
 from scipy.stats.stats import pearsonr
-
-# diccionario de diccionario para almacernar los datos
-# {userId : {peliculaID : valoracion, ...},...}
-def diccionarioUsuario(pathToFile):
-	user = dict()
-	
-	with open (pathToFile) as raw_data:
-		for item in raw_data:
-						
-			userID,filmID,rating,_=item.split("\t")
-			if(userID not in  user):			
-				user[userID]={filmID:rating}
-							
-			else:
-				user.get(userID)[filmID]=rating
-
-	print (user)
-
-"""
-Define el ejemplo de la pagina 6
-Modificado para que sea usando diccionarios
-"""
-def userExample():
-    conj = {"a":{1:5,2:3,3:4,4:4},
-            "b":{1:3,2:1,3:2,4:3,5:3},
-            "c":{1:4,2:3,3:4,4:3,5:5},
-            "d":{1:3,2:3,3:1,4:5,5:4},
-            "e":{1:1,2:5,3:5,4:2,5:1},
-           }
-    return conj
 
 # x: dataset
 # y: dataset
@@ -94,11 +63,3 @@ def prediction (a, p, N, threshold):
         print("Media",rb,"Sim",sim,"Score",score)
     pred += num/den
     return pred
-
-#diccionarioUsuario("u.data")
-conj = userExample()
-#print(conj)
-
-
-#print (neighborhood("a",conj,0.6))
-print(prediction("a",5,conj,0.6))
