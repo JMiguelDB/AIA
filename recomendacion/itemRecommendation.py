@@ -36,10 +36,10 @@ calcula los items mas similares y que superen el umbral
 """
 def neighborhood(x,conj_user,conj_item,threshold):
     neighborhood = {}
-    sim = 0
     itemX = conj_item.get(x)
     #Recorremos todos los items
     for item in conj_item:
+        sim = 0
         users = []
         if item != x:
             itemY = conj_item.get(item)
@@ -48,9 +48,10 @@ def neighborhood(x,conj_user,conj_item,threshold):
                 #Comprobamos si el usuario existe puntuado en la lista del item recibido
                 if user in itemX:
                     users.append(user)
-            print("Usuarios que han puntuado",x,item, users)
-            sim = similarity(x,item,users,conj_user)
-            print("Similaridad:",sim)
+            #print("Usuarios que han puntuado",x,item, users)
+            if users != []:
+                sim = similarity(x,item,users,conj_user)
+            #print("Similaridad:",sim)
             #Si la similaridad supera el umbral, lo consideramos vecino
             if(sim >= threshold):
                 neighborhood[item] = sim
@@ -75,5 +76,8 @@ def prediction (a, p, conj_user,conj_item, threshold):
             sim = neighbors.get(item)
             num += (sim*score)
             den += sim
-            print("Sim",sim,"Score",score) 
-    return (num/den)
+            #print("Sim",sim,"Score",score)
+    if num == 0 and den == 0:
+        print("No hay ningun vecino del item {} que este puntuado por el usuario {}".format(p,a))
+    else:
+        return (num/den)

@@ -10,33 +10,36 @@ import itemRecommendation as itemR
 # diccionario de diccionario para almacernar los datos en funcion de los usuarios
 # {userId : {peliculaID : valoracion, ...},...}
 def userDict(pathToFile):
-	user = dict()
+    user = dict()
 	#user id | item id | rating | timestamp
-	with open (pathToFile) as raw_data:
-		for item in raw_data:
-						
-			userID,filmID,rating,_=item.split("\t")
-			if(userID not in  user):			
-				user[userID]={filmID:rating}
-							
-			else:
-				user.get(userID)[filmID]=rating
-	return user
+    with open (pathToFile) as raw_data:
+        for item in raw_data:
+            userID,filmID,rating,_=item.split("\t")
+            userID = int(userID)
+            filmID = int(filmID)
+            rating = int(rating)
+            if(userID not in  user):			
+                user[userID]={filmID:rating}
+            else:
+                user.get(userID)[filmID]=rating
+    return user
  
 # diccionario de diccionario para almacernar los datos en funcion de los items
 # {userId : {peliculaID : valoracion, ...},...}
 def itemDict(pathToFile):
-	dictionary = dict()
+    dictionary = dict()
 	#user id | item id | rating | timestamp
-	with open (pathToFile) as raw_data:
-		for item in raw_data:					
-			userID,filmID,rating,_=item.split("\t")
-			if(filmID not in  dictionary):			
-				dictionary[filmID]={userID:rating}
-							
-			else:
-				dictionary.get(filmID)[userID]=rating
-	return dictionary
+    with open (pathToFile) as raw_data:
+        for item in raw_data:					
+            userID,filmID,rating,_=item.split("\t")
+            userID = int(userID)
+            filmID = int(filmID)
+            rating = int(rating)
+            if(filmID not in  dictionary):			
+                dictionary[filmID]={userID:rating}					
+            else:
+                dictionary.get(filmID)[userID]=rating
+    return dictionary
 
 """
 Define el ejemplo de la pagina 6
@@ -65,11 +68,21 @@ conj1,conj2 = example()
 print("----- Ejemplo teoria con recomendacion en usuarios ------")
 print("Usuarios vecinos de A", userR.neighborhood("a",conj1,0.6))
 print("Prediccion de la puntuacion del item 5 para el usuario A:",userR.prediction("a",5,conj1,0.6))
-
+print("  ")
 print("----- Ejemplo teoria con recomendacion en items ------")
 print("Items vecinos de 1", itemR.neighborhood(1,conj1,conj2,0.6))
 print("Prediccion de la puntuacion del item 5 para el usuario A:",itemR.prediction("a", 5, conj1,conj2, 0.6))
-
+print("  ")
 #------------- Prueba con el conjunto de datos de peliculas -----------------  
-userDict("u.data") 
-itemDict("u.data")
+conj1 = userDict("u.data") 
+conj2 = itemDict("u.data")
+
+print("----- Ejemplo practico con recomendacion en usuarios ------")
+print("Usuarios vecinos de 196", userR.neighborhood(872,conj1,0.8))
+print("-------------------------------------------------------")
+print("Prediccion de la puntuacion del item 7 para el usuario 872:",userR.prediction(872,7,conj1,0.6))
+print("  ")
+print("----- Ejemplo practico con recomendacion en items ------")
+print("Items vecinos de 7", itemR.neighborhood(7,conj1,conj2,0.6))
+print("-------------------------------------------------------")
+print("Prediccion de la puntuacion del item 5 para el usuario A:",itemR.prediction(872, 7, conj1,conj2, 0.3))
