@@ -6,6 +6,7 @@ Created on Tue Mar  7 14:18:25 2017
 """
 import userRecommendation as userR
 import itemRecommendation as itemR
+import cestaCompra as cesta
 
 # diccionario de diccionario para almacernar los datos en funcion de los usuarios
 # {userId : {peliculaID : valoracion, ...},...}
@@ -64,6 +65,7 @@ def example():
 
 #------------------------- Prueba con ejemplo de teoría ---------------------
 conj1,conj2 = example()
+lista1,items1 = cesta.example()
 
 print("----- Ejemplo teoria con recomendacion en usuarios ------")
 print("Usuarios vecinos de A", userR.neighborhood("a",conj1,0.6))
@@ -73,9 +75,16 @@ print("----- Ejemplo teoria con recomendacion en items ------")
 print("Items vecinos de 1", itemR.neighborhood(1,conj1,conj2,0.6))
 print("Prediccion de la puntuacion del item 5 para el usuario A:",itemR.prediction("a", 5, conj1,conj2, 0.6))
 print("  ")
+print("----- Ejemplo teoria con cesta de la compra ------")
+L = cesta.Apriori(lista1,items1,2)
+reglas = cesta.reglasAsociacion(L,lista1,0.1)
+print("Conjuntos frecuentes con algoritmo Apriori con soporte 2: ",L)
+print("Reglas de asociacion con lift de 0.1 : ",reglas)
+print("  ")
 #------------- Prueba con el conjunto de datos de peliculas -----------------  
 conj1 = userDict("u.data") 
 conj2 = itemDict("u.data")
+lista,items = cesta.readData("retail.dat", 10, True)
 
 print("----- Ejemplo practico con recomendacion en usuarios ------")
 print("Usuarios vecinos de 196", userR.neighborhood(872,conj1,0.8))
@@ -85,4 +94,10 @@ print("  ")
 print("----- Ejemplo practico con recomendacion en items ------")
 print("Items vecinos de 7", itemR.neighborhood(7,conj1,conj2,0.6))
 print("-------------------------------------------------------")
-print("Prediccion de la puntuacion del item 5 para el usuario A:",itemR.prediction(872, 7, conj1,conj2, 0.3))
+print("Prediccion de la puntuacion del item 7 para el usuario 872:",itemR.prediction(872, 7, conj1,conj2, 0.3))
+print("  ")
+print("----- Ejemplo practico con cesta de la compra ------")
+L = cesta.Apriori(lista,items,2)
+reglas = cesta.reglasAsociacion(L,lista,0.1)
+print("Conjuntos frecuentes con algoritmo Apriori con soporte 2: ",L)
+print("Reglas de asociacion con lift de 0.1 : ",reglas)
