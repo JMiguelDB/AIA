@@ -4,9 +4,6 @@ import math
 # x: dataset
 # y: dataset
 def similarity(x,y):
-    #r,_= pearsonr(x, y)
-    #return (r)
-
     num = 0
     den1 = 0
     den2 = 0
