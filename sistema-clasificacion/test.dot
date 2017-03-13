@@ -1,0 +1,32 @@
+digraph Tree {
+node [shape=box] ;
+0 [label="Age <= 46.5\nentropy = 0.8853\nsamples = 225000\nvalue = [68236, 156764]"] ;
+1 [label="AwaitingTime <= 9.5\nentropy = 0.9275\nsamples = 137566\nvalue = [47158, 90408]"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="AwaitingTime <= 1.5\nentropy = 0.8863\nsamples = 70725\nvalue = [21512, 49213]"] ;
+1 -> 2 ;
+3 [label="entropy = 0.8261\nsamples = 12966\nvalue = [3366, 9600]"] ;
+2 -> 3 ;
+4 [label="entropy = 0.8979\nsamples = 57759\nvalue = [18146, 39613]"] ;
+2 -> 4 ;
+5 [label="Sms_Reminder <= 0.5\nentropy = 0.9606\nsamples = 66841\nvalue = [25646, 41195]"] ;
+1 -> 5 ;
+6 [label="entropy = 0.9866\nsamples = 18410\nvalue = [7954, 10456]"] ;
+5 -> 6 ;
+7 [label="entropy = 0.947\nsamples = 48431\nvalue = [17692, 30739]"] ;
+5 -> 7 ;
+8 [label="AwaitingTime <= 9.5\nentropy = 0.7968\nsamples = 87434\nvalue = [21078, 66356]"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label="Age <= 58.5\nentropy = 0.7488\nsamples = 51112\nvalue = [10932, 40180]"] ;
+8 -> 9 ;
+10 [label="entropy = 0.7895\nsamples = 23602\nvalue = [5587, 18015]"] ;
+9 -> 10 ;
+11 [label="entropy = 0.7104\nsamples = 27510\nvalue = [5345, 22165]"] ;
+9 -> 11 ;
+12 [label="Sms_Reminder <= 0.5\nentropy = 0.8545\nsamples = 36322\nvalue = [10146, 26176]"] ;
+8 -> 12 ;
+13 [label="entropy = 0.9035\nsamples = 10816\nvalue = [3452, 7364]"] ;
+12 -> 13 ;
+14 [label="entropy = 0.8304\nsamples = 25506\nvalue = [6694, 18812]"] ;
+12 -> 14 ;
+}

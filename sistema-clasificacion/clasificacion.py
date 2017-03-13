@@ -14,6 +14,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import cross_val_score
 from sklearn.cross_validation import cross_val_predict
+from sklearn.tree import export_graphviz
 import scipy
 import sklearn.metrics
 
@@ -32,10 +33,11 @@ class clasificacion():
                 test[i] = 0
             else:
                 test[i] = 1
-                    
+                          
         #Eliminamos las columnas de fechas, status y titulo de columna
-        dataset = dataset[1:]
         dataset = np.delete(dataset,[2,3,5],1)
+        self.x_names = dataset[0]
+        dataset = dataset[1:]
         #Convertimos el string del dia a un numero y los dias de espera los convertimos a positivo
         for i in range(len(dataset)):
             dataset[i][2] = self.__dayToNumber(dataset[i][2])
@@ -91,7 +93,7 @@ class clasificacion():
     Metodo que aplica la validacion cruzada al tipo de clasificador pasado por parametros
     y diviendo el conjunto de datos en k trozos
     """
-    def validacion_cruzada(self, clasificador, k):
+    def validacion_cruzada(self, clasificador, k, tipo):
         #Se genera un modelo que normaliza los datos y utiliza el clasificador recibido
         modelo = Pipeline([('normalizador', StandardScaler()), ('modelo', clasificador)])
         #Genera conjuntos de datos de tamaño k
@@ -108,6 +110,8 @@ class clasificacion():
         print("Precision del clasificador para el conjunto de pruebas:", sklearn.metrics.accuracy_score(self.y_data.astype(float),predicted.astype(float)))
         print("Tasa de aciertos/fallos: \n",sklearn.metrics.confusion_matrix(self.y_data.astype(float),predicted.astype(float)))
         print("Resumen: \n",sklearn.metrics.classification_report(self.y_data.astype(float),predicted.astype(float)))
+        if tipo == "T":
+            export_graphviz(clasificador,feature_names=self.x_names,out_file="test.dot")
         
     def representacion_grafica(self,x,y,x_name,y_name):
         for tipo,marca,color in zip(range(2),"soD","rgb"):
