@@ -75,7 +75,7 @@ class clasificacion():
         self.x_data = self.x_data[:,car]
     
     """
-    Metodo que genera el conjunto de prueba y de entrenamiento
+    Metodo que genera el conjunto de prueba y de entrenamiento, y lo aplica al clasificador
     Recibe como parametro la velocidad de aprendizaje y el clasificador
     """
     def train(self,clasificador,learning_rate = 0.25):
@@ -88,7 +88,7 @@ class clasificacion():
         print("Precision del clasificador para el conjunto de pruebas:", sklearn.metrics.accuracy_score(y_test.astype(float),y_test_pred.astype(float)))
         print("Tasa de aciertos/fallos: \n",sklearn.metrics.confusion_matrix(y_test.astype(float),y_test_pred.astype(float)))
         print("Resumen: \n",sklearn.metrics.classification_report(y_test.astype(float),y_test_pred.astype(float)))
-        #print("Probabilidades de clasificacion", clasificador.predict_proba(X_test.astype(float)))
+
     """
     Metodo que aplica la validacion cruzada al tipo de clasificador pasado por parametros
     y diviendo el conjunto de datos en k trozos
