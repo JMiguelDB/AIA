@@ -21,7 +21,6 @@ def inicializaVectorizador(corpus):
 
 	
 	vectorizador = CountVectorizer(min_df=1)#inicialización del vectorizador
-
 	datos = vectorizador.fit_transform(corpus) #vectoriza el corpus
 		
 	vector = datos.toarray()
@@ -143,34 +142,22 @@ print ("distancias normalizadas sin stop words y stemmatizadas ordenadas:", norm
 #print (stop)
 
 print ("----------------------paso 5 -----------------------------")
-"""
-def tfid(corpus, texto):
+
+def tfid(corpus, texto, stopWords):
 	#vect = ect = TfidfVectorizer(sublinear_tf=True, max_df=0.5, analyzer=texto,stop_words='spanish', vocabulary=corpus[0])
 	#vect.fit(corpus)	
 	
-	vectorizer = TfidfVectorizer(
-                        use_idf=True,
-                        norm=None, 
-                        smooth_idf=False, 
-                        sublinear_tf=False, 
-                        binary=False,
-                        min_df=1, max_df=1.0, max_features=None,
-                        strip_accents='unicode', 
-                        ngram_range=(1,1), preprocessor=None,
-	                stop_words='spanish',
-			tokenizer=None,
-			vocabulary=corpus[0],
-			analyzer=texto             
-	)
-
-	X = vectorizer.fit_transform(corpus)
-	idf = vectorizer.idf_
-	print (dict(zip(vectorizer.get_feature_names(), idf)))
+	vectorizador = TfidfVectorizer(min_df=1)
+	datos = vectorizador.fit_transform(corpus)	
+	vector = datos.toarray()	
+	return vectorizador ,vector
 
 
-print(tfid(vectorInicialStem,textoStem))
-"""
-
+vectorizadorTF, vectorInicialTF= tfid(corpusStem,textoStem,stop)
+euclideasTF = calculaDistanciaEuclidea(vectorInicialTF, vectorAnalizarStem)
+print ("distancias euclideas TF:", euclideasStem)
+normalTF=distanciaNormalizada(vectorInicialTF,vectorAnalizarStem)
+print ("distancias normalizadas TF:", normalStem)
 
 
 
