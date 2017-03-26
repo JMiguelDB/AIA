@@ -1,6 +1,8 @@
 # MII-AIA 2016-17
 # Práctica del tema 6 - Parte 0 
 # =============================
+import votes as votos
+import math
 
 # Este trabajo está inspirado en el proyecto "Classification" de The Pacman
 # Projects, desarrollados para el curso de Introducción a la Inteligencia
@@ -170,6 +172,8 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         """
 
         # *********** COMPLETA EL CÓDIGO **************
+        self.k = k
+        super().__init__(atributo_clasificacion,clases,atributos,valores_atributos)
         
     def entrena(self,entr,clas_entr,valid,clas_valid,autoajuste=True):
 
@@ -198,8 +202,54 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         """
 
         # *********** COMPLETA EL CÓDIGO **************
+        candidatos = [0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 50, 100]
+        prob_priori = {}
+        tabla_recuento = {}
+        #Generamos los valores a priori para cada tipo de clasificacion
+        for tipo in self.clases:
+            count = 0
+            for clas in clas_entr:
+                if tipo == clas:
+                    count += 1
+            prob_priori[tipo] = (count/len(clas_entr))
+        self.prob_priori = prob_priori    
+        print("Probabilidades a priori: {} \n".format(prob_priori))
         
-    def clasifica(self,ejemplo):
+        #Ajustamos el valor de K
+        if autoajuste == True:
+            self.k = 1
+          
+        #Creamos un diccionario por cada posible clasificacion que contiene una lista de los atributos con sus posibles valores
+        for clase_clasif in self.clases:
+            tabla_recuento[clase_clasif] = []
+            for caracteristica in self.atributos:
+                val = {}
+                for valor in self.valores_atributos[caracteristica]:
+                    val[valor] = 1
+                tabla_recuento[clase_clasif].append(val)
+                
+        #Hacemos un recuento de los atributos para cada tipo de clasificacion
+        for i in range(len(entr)):
+            for j in range(len(entr[i])):
+                if entr[i][j] in tabla_recuento[clas_entr[i]][j]:
+                    tabla_recuento[clas_entr[i]][j][entr[i][j]] += 1 
+        
+        print(tabla_recuento, "\n")
+        
+        #Aplicamos el suavizado de Laplace y la probabilidad resultante se almacena en forma logaritmica
+        for clas,caracteristicas in tabla_recuento.items():
+            for valores in caracteristicas:
+                for valor in valores:
+                    #print(valores[valor], len(valores), sum(valores.values()))
+                    #print(clas, prob_priori[clas])
+                    #prob = (valores[valor] + self.k) / (sum(valores.values()) + (self.k * len(valores)))
+                    prob = (valores[valor] + self.k) / (prob_priori[clas] + (self.k * len(valores)))
+                    valores[valor] = math.log(prob)
+
+        print("Tabla con las probabilidades de cada caracteristica: \n",tabla_recuento, "\n")
+        self.tabla_prob = tabla_recuento
+        
+    def clasifica(self,test,clas_test):
 
         """ 
         Método para clasificación de ejemplos, usando el clasificador Naive
@@ -215,6 +265,51 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         """
 
         # *********** COMPLETA EL CÓDIGO **************
-
-# ---------------------------------------------------------------------------
+        clasificaciones = []
+        for i in range(len(test)):
+            v = 0
+            clasificacion = ""
+            #Accedemos a la tabla de probabilidades de cada caracteristica
+            for clas,caracteristicas in self.tabla_prob.items():
+                #print(clas,caracteristicas)
+                operation = 0
+                #Comprobamos si el valor de la caracteristica existe y extraemos la probabilidad
+                for j in range(len(test[i])):
+                    #print(test[i][j], caracteristicas[j])
+                    if test[i][j] in caracteristicas[j]:
+                        #tabla_recuento[clas_entr[i]][j][entr[i][j]] += 1 
+                        operation += caracteristicas[j][test[i][j]]
+                sol = math.log(self.prob_priori[clas]) + operation
+                if sol > v:
+                    v = sol
+                    clasificacion = clas
+            clasificaciones.append(clasificacion)
+        print("Clasificaciones obtenidas: \n", clasificaciones)
         
+        #Calculamos la tasa de aciertos de la clasificacion
+        aciertos = 0
+        for clas in range(len(clasificaciones)):
+            if clasificaciones[clas] == clas_test[clas]:
+                aciertos += 1
+        aciertos = aciertos / len(clasificaciones)
+        
+        print("\n Tasa de aciertos: {}%".format(100*aciertos))
+# ---------------------------------------------------------------------------
+print("--------------- Ejemplo clasificacion votos de partidos -------------------- \n")
+clasificador_votos = ClasificadorNaiveBayes(votos.votos_atributo_clasificacion,votos.votos_clases,
+                                            votos.votos_atributos,votos.votos_valores_atributos)      
+
+print("Nombre de la clase de clasificacion: {} \n".format(clasificador_votos.atributo_clasificacion))
+print("Posibles valores de clasificacion: {} \n".format(clasificador_votos.clases))
+
+clasificador_votos.entrena(votos.votos_entr,votos.votos_entr_clas,votos.votos_valid,votos.votos_valid_clas,False)
+clasificador_votos.clasifica(votos.votos_test,votos.votos_test_clas)
+
+print("--------------- Ejemplo clasificacion de digitos -------------------- \n")
+clasificador_digitos = ClasificadorNaiveBayes('digito',
+                                              ['0','1','2','3','4','5','6','7','8','9'],
+                                              )
+
+
+
+
