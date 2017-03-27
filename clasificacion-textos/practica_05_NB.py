@@ -306,9 +306,39 @@ clasificador_votos.entrena(votos.votos_entr,votos.votos_entr_clas,votos.votos_va
 clasificador_votos.clasifica(votos.votos_test,votos.votos_test_clas)
 
 print("--------------- Ejemplo clasificacion de digitos -------------------- \n")
+def leeCaracteristicas(pathToFile):
+    lista = []
+    contador = 0
+    with open (pathToFile) as raw_data:
+        caracteristicas = []
+        for item in raw_data:
+            if contador == 28:
+                c = caracteristicas[:]
+                contador = 0
+                lista.append(c)
+                del caracteristicas[:]
+            linea=item.split("\n")
+            for car in linea:
+                for val in car:
+                    if val == ' ':
+                        caracteristicas.append(0)
+                    elif val == '+' or val == '#':
+                        caracteristicas.append(1)
+            contador += 1
+    return lista
+
+train_data = leeCaracteristicas("digitdata/trainingimages")
+
+digitos_atributos = []
+digitos_valor_atributos = {}
+for i in range(28*28):
+   digitos_atributos.append('pixel'+str(i)) 
+   digitos_valor_atributos['pixel'+str(i)] = [0,1]
+
 clasificador_digitos = ClasificadorNaiveBayes('digito',
                                               ['0','1','2','3','4','5','6','7','8','9'],
-                                              )
+                                              digitos_atributos,
+                                              digitos_valor_atributos)
 
 
 
