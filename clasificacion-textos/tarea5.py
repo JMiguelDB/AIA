@@ -8,6 +8,7 @@ import numpy as np
 from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 from nltk.corpus import stopwords
+from sklearn import preprocessing
 
 def cargaTweets(archivo):
     cat = []
@@ -35,18 +36,27 @@ data,target = cargaTweets("corpus.csv")
 #Generamos el pipeline con el sistema que se utilizara	
 text_clf = Pipeline([('vect', CountVectorizer()),('tfidf', TfidfTransformer()),('clf', MultinomialNB()),])
 #Definimos los parametros que utilizara el sistema
+"""
 parameters = {'vect__ngram_range': [(1, 1), (1, 2), (1,3)],
               'stop_words': stopwords.words("english"),
-              'tfidf__use_idf': (True, False, False),
-              'clf__alpha': (1e-2, 1e-3, 1e-4),
+              'tfidf__use_idf': (True, False),
+              'clf__alpha': (1e-2, 1e-3),
+            }
+"""
+parameters = {'vect__ngram_range': [(1, 1), (1, 2)],
+              'tfidf__use_idf': (True, False),
+              'clf__alpha': (1e-2, 1e-3),
             }
 #Aplicamos los parametros al sistema
-gs_clf = GridSearchCV(text_clf, parameters, n_jobs=-1)
+gs_clf = GridSearchCV(text_clf, parameters, n_jobs = 3, verbose = 5 )
 #Entrenamos el sistema
+print("data",len(data))
 mitad = int(len(data)/2)
-gs_clf = gs_clf.fit(data[:mitad], target[:mitad])
+print("Iniciado entrenamiento")
+gs_clf = gs_clf.fit(data[:10], target[:10])
+print("Entrenamiento realizado")
 #Realizamos la prediccion
-predicted = gs_clf.predict(data[mitad+1:])
+predicted = gs_clf.predict(data[mitad+1])
 
 #-------------------- Resultados ---------------------------------
 print(list(predicted))

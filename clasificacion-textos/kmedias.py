@@ -48,7 +48,7 @@ class kmedias():
                         min_dist = dist
                         cent = i
                 clusters[cent].append(conj[j])
-            print(clusters)
+            #print(clusters)
             #Calculamos la media de todos los valores de cada cluster que seran los nuevos valores de los centroides
             for i in range(k):
                 m[i] = kmedias.media(clusters[i]) 
@@ -118,9 +118,10 @@ class kmedias():
         return iris.data[:,car]
         
 print("\n --------------- Clasificacion ejemplo de teoria ----------------- \n")
-test = kmedias(2,kmedias.test(),"euclidea")
+test = kmedias(2,kmedias.test(),"manhattan")
 print("Centroides obtenidos:",test.ejecuta())
-
+"""
 print("\n --------------- Clasificacion plantas ----------------- \n")
 test1 = kmedias(3,kmedias.iris_test([2,3]),"euclidea")
 print("Centroides obtenidos:",test1.ejecuta())
+"""
