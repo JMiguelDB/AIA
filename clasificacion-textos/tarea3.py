@@ -72,19 +72,26 @@ def inicializa():
 	stop = set(stopwords.words("english"))
 	corpus = fetch_20newsgroups(subset='train', categories=categories, shuffle=True, random_state=42)	
 	#print(type(corpus),corpus)	
-	corpusData = corpus.data	
+	corpusData = corpus.data
 	corpusFil = filtra(corpusData,stop)
 	corpusSte = raiz(corpusFil,stemmer)
 	for t in corpus.target[:len(corpus.target)]:	
 		clase.append((corpus.target_names[t]))		
 	return corpusSte,clase
 	
-def devuelveMasRelacionado(distancias, clase):
-	valor =[]
-	for a,b in zip(distancias, clase):
-		valor.append((a, b))
-	valor= sorted(valor)	
-	return valor[0]
+def devuelveMasRelacionado(distancias, clase,corpusSte):
+	claseTexto =[]
+	conjunto = []
+	for a,b in zip(corpusSte, clase):
+		claseTexto.append((a, b))
+	
+	for a,b in zip(distancias, claseTexto):
+		conjunto.append((a,b))
+	
+
+
+	conjunto= sorted(conjunto)	
+	return conjunto[0]
 
 def tfid(corpus):
 	vectorizador = TfidfVectorizer(min_df=1)
@@ -92,7 +99,10 @@ def tfid(corpus):
 	vector = datos.toarray()	
 	return vectorizador ,vector
 
-texto = ["space NASA moon stars"]
+
+
+
+texto = ["space NASA moon stars galaxy shuttle rocket ESA roscomos"]
 
 corpusTratado,clase = (inicializa())
 #print(len(clase),len(corpusTratado))
@@ -104,21 +114,19 @@ vectorizadorFil,vectorInicialFil = tfid(corpusTratado)
 vectorAnalizarFil = vectorizaPrueba(vectorizadorFil,texto)
 #print ("vi:", len (vectorInicialFil), "VA::",vectorAnalizarFil)
 distancias = (euclidean_distances(vectorInicialFil, vectorAnalizarFil))
-valor = devuelveMasRelacionado(distancias,clase)
+valor = devuelveMasRelacionado(distancias,clase,corpusTratado)
 print(valor)
-print("---------------------------distancia normal-----------------------------")
 
+
+print("---------------------------distancia normal-----------------------------")
 distanciasCoseno = cosine_similarity(vectorInicialFil, vectorAnalizarFil)
-valorCoseno = devuelveMasRelacionado(distanciasCoseno,clase)
+valorCoseno = devuelveMasRelacionado(distanciasCoseno,clase,corpusTratado)
 print(valorCoseno)
 
-print("----------------------------Kmeans--------------------------------------")
 
-kmeans = KMeans(n_clusters=6, max_iter=40, n_init=2).fit(vectorInicialFil)
-labelTexto = kmeans.predict(vectorAnalizarFil) # cluster al que pertenece la prueba
-#print(kmeans.labels_) #cluster para cada elemento
 
-# unir los datos y la etiqueta
+
+
 def uneDatos(corpus, kmeans):
 	datos = []	
 	for a,b in zip (corpus, kmeans):
@@ -126,11 +134,7 @@ def uneDatos(corpus, kmeans):
 	
 	return datos
 
-datos = uneDatos(corpusTratado, kmeans.labels_)
-
-#filtrado 
-
-def filtra(datos,labelTexto ):
+def filtra(datos,labelTexto):
 	filtrados = []	
 	for i in range (len(datos)):
 		
@@ -139,18 +143,24 @@ def filtra(datos,labelTexto ):
 	
 	return (filtrados)
 
+
+print("----------------------------Kmeans--------------------------------------")
+
+kmeans = KMeans(n_clusters=12, max_iter=80, n_init=7).fit(vectorInicialFil)
+labelTexto = kmeans.predict(vectorAnalizarFil) # cluster al que pertenece la prueba
+# unir los datos y la etiqueta
+datos = uneDatos(corpusTratado, kmeans.labels_)
+#filtrado 
 datosFiltrados = filtra(datos,labelTexto)
-
-
-
-
 vectorizadorK,vectorInicialK = tfid(datosFiltrados)
 textoK = vectorizaPrueba(vectorizadorK,texto)
-distanciasCoseno = cosine_similarity(vectorInicialFil, vectorAnalizarFil)
+distanciasCoseno = cosine_similarity(vectorInicialK, textoK)
 datosOrdenados = uneDatos(datosFiltrados,distanciasCoseno)
 datosOrdenados = sorted(datosOrdenados)
 print(labelTexto)
 print(datosOrdenados[0])
+
+print("----------------------rendimiento---------------------------------------")
 
 def rendimiento(datosOrdenados,texto):
 	resultados=[]
